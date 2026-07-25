@@ -1,0 +1,16 @@
+[Unit]
+Description=Honcho Dashboard API Bridge
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=robert
+ExecStart=/home/robert/.venvs/honcho-dashboard-bridge/bin/python /home/robert/honcho-dashboard-bridge.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/home/robert/logs/honcho-bridge.log
+StandardError=append:/home/robert/logs/honcho-bridge.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Honcho Dashboard</title>
+  <meta name="description" content="Self-hosted Honcho Memory Dashboard">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+
+  <!-- Chart.js -->
+  <script src="assets/chart.umd.min.js"></script>
+
+  <!-- App -->
+  <link rel="stylesheet" href="styles.css?v=20260725-sidebar-font-bump">
+  <script src="config.js"></script>
+  <script src="api.js"></script>
+  <script src="charts.js"></script>
+  <script src="utils.js"></script>
+  <script src="session.js"></script>
+  <script src="conclusion.js"></script>
+  <script src="app.js?v=20260725-deriver-label"></script>
+</head>
+<body>
+  <button id="sidebar-toggle" class="mobile-menu-btn" type="button" aria-label="Open menu" aria-controls="dashboard-sidebar" aria-expanded="false">☰</button>
+  <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Switch theme" title="Switch theme">🌙</button>
+  <div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
+  <div class="app-container">
+    <!-- ===== SIDEBAR ===== -->
+    <aside id="dashboard-sidebar" class="sidebar" aria-label="Dashboard navigation">
+      <div class="sidebar-header">
+        <h1>
+          <span class="logo">H</span>
+          <span>Honcho</span><button id="sidebar-close" class="sidebar-close" type="button" aria-label="Close menu">×</button>
+        </h1>
+        <div class="subtitle">Memory Dashboard</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Monitor</div>
+          <button class="nav-item active" data-page="overview">
+            <span class="icon">📊</span>
+            <span>Overview</span>
+          </button>
+          <button class="nav-item" data-page="health">
+            <span class="icon">💓</span>
+            <span>Health</span>
+          </button>
+          <button class="nav-item" data-page="system">
+            <span class="icon">🖥️</span>
+            <span>System</span>
+          </button>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Explore</div>
+          <button class="nav-item" data-page="workspaces">
+            <span class="icon">📁</span>
+            <span>Workspaces</span>
+          </button>
+          <button class="nav-item" data-page="peers">
+            <span class="icon">👤</span>
+            <span>Peers</span>
+          </button>
+          <button class="nav-item" data-page="sessions">
+            <span class="icon">💬</span>
+            <span>Sessions</span>
+            <span class="badge">0</span>
+          </button>
+          <button class="nav-item" data-page="conclusions">
+            <span class="icon">🧠</span>
+            <span>Conclusions</span>
+            <span class="badge">0</span>
+          </button>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Analysis</div>
+          <button class="nav-item" data-page="search">
+            <span class="icon">🔍</span>
+            <span>Memory Search</span>
+          </button>
+          <button class="nav-item" data-page="statistics">
+            <span class="icon">📈</span>
+            <span>Statistics</span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div>
+          <span id="status-dot" class="status-dot offline"></span>
+          <span id="status-text">Connecting...</span>
+        </div>
+        <div class="mt-2 text-xs">
+          Auto-refresh: <span id="refresh-interval">30s</span>
+        </div>
+        <div class="mt-1 text-xs">
+          Last updated: <span id="last-updated">—</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+      <!-- Overview -->
+      <section id="page-overview" class="page active">
+        <div class="page-header">
+          <h2>Overview</h2>
+          <p>Real-time snapshot of your Honcho memory system</p>
+        </div>
+        <div id="overview-content"></div>
+      </section>
+
+      <!-- Health -->
+      <section id="page-health" class="page">
+        <div class="page-header">
+          <h2>Health Check</h2>
+          <p>API status, latency, and system diagnostics</p>
+        </div>
+        <div id="health-content"></div>
+      </section>
+
+      <!-- Workspaces -->
+      <section id="page-workspaces" class="page">
+        <div class="page-header">
+          <h2>Workspaces</h2>
+          <p>All Honcho workspaces and their metadata</p>
+        </div>
+        <div id="workspaces-content"></div>
+      </section>
+
+      <!-- Peers -->
+      <section id="page-peers" class="page">
+        <div class="page-header">
+          <h2>Peers</h2>
+          <p>Identities tracked by Honcho across workspaces</p>
+        </div>
+        <div id="peers-content"></div>
+      </section>
+
+      <!-- Sessions -->
+      <section id="page-sessions" class="page">
+        <div class="page-header">
+          <h2>Sessions</h2>
+          <p>Conversation sessions stored in Honcho memory</p>
+        </div>
+        <div id="sessions-content"></div>
+      </section>
+
+      <!-- Conclusions -->
+      <section id="page-conclusions" class="page">
+        <div class="page-header">
+          <h2>Conclusions</h2>
+          <p>Learned facts and observations about peers</p>
+        </div>
+        <div id="conclusions-content"></div>
+      </section>
+
+      <!-- Search -->
+      <section id="page-search" class="page">
+        <div id="search-content"></div>
+      </section>
+
+      <!-- System Health -->
+      <section id="page-system" class="page">
+        <div class="page-header">
+          <h2>System Health</h2>
+          <p>Live monitoring of Honcho infrastructure</p>
+        </div>
+        <div id="system-content"></div>
+      </section>
+      <!-- Statistics -->
+      <section id="page-statistics" class="page">
+        <div class="page-header">
+          <h2>Statistics</h2>
+          <p>Visual analytics of your Honcho memory system</p>
+        </div>
+        <div id="statistics-content"></div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
